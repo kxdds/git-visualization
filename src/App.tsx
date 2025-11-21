@@ -14,29 +14,29 @@ import ScenarioModal from './components/ScenarioModal';
  */
 const App: React.FC = () => {
   // --- 状态管理 ---
-  
+
   // 当前语言设置 (中文/英文)
-  const [language, setLanguage] = useState<Language>(Language.ZH); 
-  
+  const [language, setLanguage] = useState<Language>(Language.ZH);
+
   // 核心 Git 状态 (包含提交历史、分支、HEAD 指针等)
   const [gitState, setGitState] = useState<GitState>(INITIAL_GIT_STATE);
-  
+
   // 控制台日志列表 (包含用户命令、系统响应和错误信息)
   const [logs, setLogs] = useState<LogEntry[]>([
-    { 
-      id: 'init', 
-      type: 'response', 
-      content: language === Language.ZH ? '欢迎使用 GitViz AI！输入 git 命令开始学习。' : 'Welcome to GitViz AI! Enter a git command to start learning.', 
-      timestamp: Date.now() 
+    {
+      id: 'init',
+      type: 'response',
+      content: language === Language.ZH ? '欢迎使用 GitViz AI！输入 git 命令开始学习。' : 'Welcome to GitViz AI! Enter a git command to start learning.',
+      timestamp: Date.now()
     }
   ]);
-  
+
   // 当前输入框的值
   const [currentInput, setCurrentInput] = useState('');
-  
+
   // 加载状态 (模拟命令处理延迟)
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // 模态框可见性状态
   const [isCheatSheetOpen, setIsCheatSheetOpen] = useState(false);
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false);
@@ -63,29 +63,29 @@ const App: React.FC = () => {
     // 2. 调用本地 Git 引擎模拟执行
     // 使用 setTimeout 模拟处理延迟，提升交互真实感
     setTimeout(async () => {
-        const result = await executeLocalCommand(gitState, commandStr, language);
+      const result = await executeLocalCommand(gitState, commandStr, language);
 
-        setIsLoading(false);
+      setIsLoading(false);
 
-        // 3. 根据结果更新状态或显示错误
-        if (result.error) {
-          setLogs(prev => [...prev, {
-            id: Date.now().toString() + '-err',
-            type: 'error',
-            content: result.error || 'Unknown error',
-            timestamp: Date.now()
-          }]);
-        } else {
-          setGitState(result.newState);
-          setLogs(prev => [...prev, {
-            id: Date.now().toString() + '-res',
-            type: 'response',
-            content: result.explanation,
-            timestamp: Date.now()
-          }]);
-        }
+      // 3. 根据结果更新状态或显示错误
+      if (result.error) {
+        setLogs(prev => [...prev, {
+          id: Date.now().toString() + '-err',
+          type: 'error',
+          content: result.error || 'Unknown error',
+          timestamp: Date.now()
+        }]);
+      } else {
+        setGitState(result.newState);
+        setLogs(prev => [...prev, {
+          id: Date.now().toString() + '-res',
+          type: 'response',
+          content: result.explanation,
+          timestamp: Date.now()
+        }]);
+      }
     }, 300);
-    
+
   }, [gitState, language]);
 
   /**
@@ -97,8 +97,8 @@ const App: React.FC = () => {
     setLogs(prev => [...prev, {
       id: Date.now().toString() + '-scenario',
       type: 'response',
-      content: language === Language.ZH 
-        ? `已加载场景: ${scenario.title[Language.ZH]}\n${scenario.description[Language.ZH]}` 
+      content: language === Language.ZH
+        ? `已加载场景: ${scenario.title[Language.ZH]}\n${scenario.description[Language.ZH]}`
         : `Scenario Loaded: ${scenario.title[Language.EN]}\n${scenario.description[Language.EN]}`,
       timestamp: Date.now()
     }]);
@@ -108,13 +108,13 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen w-screen bg-slate-950 text-slate-200 overflow-hidden font-sans">
       {/* 模态框组件 */}
-      <CheatSheetModal 
-        isOpen={isCheatSheetOpen} 
-        onClose={() => setIsCheatSheetOpen(false)} 
-        language={language} 
+      <CheatSheetModal
+        isOpen={isCheatSheetOpen}
+        onClose={() => setIsCheatSheetOpen(false)}
+        language={language}
       />
 
-      <ScenarioModal 
+      <ScenarioModal
         isOpen={isScenarioModalOpen}
         onClose={() => setIsScenarioModalOpen(false)}
         onSelectScenario={handleLoadScenario}
@@ -127,14 +127,14 @@ const App: React.FC = () => {
         <header className="h-14 border-b border-slate-800 flex items-center px-6 justify-between bg-slate-900/50 backdrop-blur z-20">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-orange-500 to-red-600 p-1.5 rounded-md shadow-lg shadow-orange-500/20">
-               <GitBranch size={20} className="text-white" />
+              <GitBranch size={20} className="text-white" />
             </div>
             <div>
               <h1 className="font-bold text-lg tracking-tight text-slate-100">{UI_TEXT[language].title}</h1>
               <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">{UI_TEXT[language].subtitle}</p>
             </div>
           </div>
-          
+
           {/* 状态统计与功能按钮 */}
           <div className="flex items-center gap-6">
             {/* 简易统计 (仅在大屏显示) */}
@@ -175,24 +175,24 @@ const App: React.FC = () => {
         <div className="flex-1 p-4 overflow-hidden relative bg-slate-950">
           {/* 装饰性背景层 (透明的 Git 命令) */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0 flex flex-wrap content-center justify-center opacity-[0.02]">
-             <div className="w-full h-full flex flex-wrap gap-8 p-10 justify-center content-center transform -rotate-12 scale-110">
-               {BACKGROUND_COMMANDS.map((cmd, i) => (
-                 <span key={i} className="text-4xl md:text-6xl font-black font-mono text-white whitespace-nowrap">
-                   {cmd}
-                 </span>
-               ))}
-               {/* 重复填充空间 */}
-               {BACKGROUND_COMMANDS.map((cmd, i) => (
-                 <span key={`rep-${i}`} className="text-4xl md:text-6xl font-black font-mono text-white whitespace-nowrap">
-                   {cmd}
-                 </span>
-               ))}
-             </div>
+            <div className="w-full h-full flex flex-wrap gap-8 p-10 justify-center content-center transform -rotate-12 scale-110">
+              {BACKGROUND_COMMANDS.map((cmd, i) => (
+                <span key={i} className="text-4xl md:text-6xl font-black font-mono text-white whitespace-nowrap">
+                  {cmd}
+                </span>
+              ))}
+              {/* 重复填充空间 */}
+              {BACKGROUND_COMMANDS.map((cmd, i) => (
+                <span key={`rep-${i}`} className="text-4xl md:text-6xl font-black font-mono text-white whitespace-nowrap">
+                  {cmd}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* 点阵背景纹理 */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] z-0"></div>
-          
+
           {/* 核心可视化组件 */}
           <GitGraph state={gitState} />
         </div>
@@ -200,7 +200,7 @@ const App: React.FC = () => {
 
       {/* 右侧面板: 控制台交互区 */}
       <aside className="w-96 min-w-[350px] max-w-[450px] z-10 h-full">
-        <Console 
+        <Console
           language={language}
           logs={logs}
           gitState={gitState}

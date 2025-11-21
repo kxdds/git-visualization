@@ -30,7 +30,7 @@ const CheatSheetModal: React.FC<CheatSheetModalProps> = ({ isOpen, onClose, lang
               <p className="text-sm text-slate-400">Reference guide for common Git commands</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
           >

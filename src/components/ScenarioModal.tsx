@@ -43,7 +43,7 @@ const ScenarioModal: React.FC<ScenarioModalProps> = ({ isOpen, onClose, onSelect
               </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
           >
@@ -55,8 +55,8 @@ const ScenarioModal: React.FC<ScenarioModalProps> = ({ isOpen, onClose, onSelect
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {SCENARIOS.map((scenario) => (
-              <div 
-                key={scenario.id} 
+              <div
+                key={scenario.id}
                 className="group relative bg-slate-800/50 rounded-xl p-5 border border-slate-700/50 hover:border-purple-500/50 hover:bg-slate-800 transition-all cursor-pointer flex flex-col"
                 onClick={() => onSelectScenario(scenario)}
               >
@@ -67,18 +67,18 @@ const ScenarioModal: React.FC<ScenarioModalProps> = ({ isOpen, onClose, onSelect
                   </div>
                   <ArrowRight size={18} className="text-slate-600 group-hover:text-purple-400 transition-colors" />
                 </div>
-                
+
                 {/* 场景标题 */}
                 <h3 className="text-lg font-bold text-slate-200 mb-2 group-hover:text-purple-300 transition-colors">
                   {scenario.title[language]}
                 </h3>
-                
+
                 {/* 场景描述 */}
                 <p className="text-sm text-slate-400 leading-relaxed mb-4 flex-1">
                   {scenario.description[language]}
                 </p>
 
-                <button 
+                <button
                   className="mt-auto w-full py-2 bg-slate-900 hover:bg-purple-600 text-slate-300 hover:text-white rounded-lg text-sm font-medium transition-colors border border-slate-700 hover:border-purple-500 flex items-center justify-center gap-2"
                 >
                   <PlayCircle size={16} />

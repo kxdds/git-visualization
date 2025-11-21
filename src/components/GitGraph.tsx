@@ -17,35 +17,35 @@ const PADDING = 50;     // 画布内边距
  * 使用 SVG 可视化展示 Git 提交历史图、分支指针和 HEAD 位置。
  */
 const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
-  
+
   // 使用 useMemo 计算节点位置和连接线，避免重复计算
   const { nodes, links, width, height } = useMemo(() => {
     // 1. 按时间戳排序提交
     const sortedCommits = [...state.commits].sort((a, b) => a.timestamp - b.timestamp);
-    
+
     // 2. 计算动态顶部边距
     // 如果很多分支或标签指向同一个提交，标签会堆叠，需要增加顶部空间防止被截断
     const labelsByCommit = new Map<string, number>();
-    
+
     // 统计分支数量
     state.branches.forEach(b => {
-       labelsByCommit.set(b.commitId, (labelsByCommit.get(b.commitId) || 0) + 1);
+      labelsByCommit.set(b.commitId, (labelsByCommit.get(b.commitId) || 0) + 1);
     });
     // 统计标签数量 (确保 tags 存在)
     (state.tags || []).forEach(t => {
-       labelsByCommit.set(t.commitId, (labelsByCommit.get(t.commitId) || 0) + 1);
+      labelsByCommit.set(t.commitId, (labelsByCommit.get(t.commitId) || 0) + 1);
     });
 
     let maxLabelStack = 0;
     for (const count of labelsByCommit.values()) {
-        maxLabelStack = Math.max(maxLabelStack, count);
+      maxLabelStack = Math.max(maxLabelStack, count);
     }
 
     // 动态计算垂直偏移量: 基础 60px + 每个堆叠标签约 28px + 缓冲
     const VERTICAL_OFFSET = Math.max(60, maxLabelStack * 28 + 30);
 
     const nodeMap = new Map<string, { x: number, y: number, data: Commit }>();
-    
+
     let maxX = 0;
     let maxY = 0;
 
@@ -54,7 +54,7 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
       const x = PADDING + index * X_SPACING;
       // y 轴由 lane (泳道) 决定，实现多分支并行视觉效果
       const y = VERTICAL_OFFSET + (commit.lane || 0) * Y_SPACING;
-      
+
       nodeMap.set(commit.id, { x, y, data: commit });
       if (x > maxX) maxX = x;
       if (y > maxY) maxY = y;
@@ -74,17 +74,17 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
           linksData.push({ x1: source.x, y1: source.y, x2: target.x, y2: target.y, targetId: target.data.id });
         }
       }
-      
+
       // 处理合并提交 (多个父节点)
       if (commit.parentIds && commit.parentIds.length > 0) {
         commit.parentIds.forEach(pid => {
-           // 避免重复添加主要父节点
-           if (pid !== commit.parentId) {
-             const target = nodeMap.get(pid);
-             if (target) {
-               linksData.push({ x1: source.x, y1: source.y, x2: target.x, y2: target.y, targetId: target.data.id });
-             }
-           }
+          // 避免重复添加主要父节点
+          if (pid !== commit.parentId) {
+            const target = nodeMap.get(pid);
+            if (target) {
+              linksData.push({ x1: source.x, y1: source.y, x2: target.x, y2: target.y, targetId: target.data.id });
+            }
+          }
         });
       }
     });
@@ -100,17 +100,17 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
   // 辅助函数：获取 HEAD 的可视化位置
   const getHeadPosition = () => {
     let commitId: string | null = null;
-    
+
     if (state.HEAD.type === 'commit') {
       commitId = state.HEAD.ref;
     } else {
       const branch = state.branches.find(b => b.name === state.HEAD.ref);
       if (branch) commitId = branch.commitId;
     }
-    
+
     if (commitId) {
       const node = nodes.find(n => n.data.id === commitId);
-      if (node) return { x: node.x, y: node.y, label: state.HEAD.type === 'branch' ? `HEAD -> ${state.HEAD.ref}` : `HEAD -> ${commitId.substring(0,4)}` };
+      if (node) return { x: node.x, y: node.y, label: state.HEAD.type === 'branch' ? `HEAD -> ${state.HEAD.ref}` : `HEAD -> ${commitId.substring(0, 4)}` };
     }
     return null;
   };
@@ -121,7 +121,7 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
   const getBranchLabels = (commitId: string) => {
     return state.branches.filter(b => b.commitId === commitId);
   };
-  
+
   // 辅助函数：获取指向特定 Commit 的所有标签
   const getTagLabels = (commitId: string) => {
     return (state.tags || []).filter(t => t.commitId === commitId);
@@ -151,16 +151,16 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
 
         {/* 绘制节点 */}
         {nodes.map((node) => {
-            const branches = getBranchLabels(node.data.id);
-            const tags = getTagLabels(node.data.id);
-            
-            // 将所有标签混合用于堆叠计算 (Branch + Tag)
-            const allLabels = [
-                ...branches.map(b => ({ ...b, type: 'branch' })),
-                ...tags.map(t => ({ ...t, type: 'tag' }))
-            ];
+          const branches = getBranchLabels(node.data.id);
+          const tags = getTagLabels(node.data.id);
 
-            return (
+          // 将所有标签混合用于堆叠计算 (Branch + Tag)
+          const allLabels = [
+            ...branches.map(b => ({ ...b, type: 'branch' })),
+            ...tags.map(t => ({ ...t, type: 'tag' }))
+          ];
+
+          return (
             <g key={node.data.id}>
               {/* 提交圆圈 */}
               <circle
@@ -172,7 +172,7 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
                 strokeWidth="3"
                 className="transition-all duration-300 hover:r-6"
               />
-              
+
               {/* 提交 ID 文本 */}
               <text
                 x={node.x}
@@ -199,7 +199,7 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
                 const isBranch = item.type === 'branch';
                 const isRemote = isBranch && ((item as any).isRemote || item.name.startsWith('origin/'));
                 const isHead = isBranch && state.HEAD.ref === item.name;
-                
+
                 // 样式配置
                 let bgFill = "#0f766e"; // 默认 Teal (本地分支)
                 let textColor = "#ffffff";
@@ -208,18 +208,18 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
                 let strokeDash = "none";
 
                 if (isBranch) {
-                    if (isHead) {
-                        bgFill = "#3b82f6"; // 蓝色 (当前分支)
-                    } else if (isRemote) {
-                        bgFill = "#5b21b6"; // 紫色 (远程分支)
-                        strokeColor = "#a78bfa"; // 浅紫色边框
-                        strokeWidth = "1.5";
-                        strokeDash = "3 2"; // 虚线边框
-                    }
+                  if (isHead) {
+                    bgFill = "#3b82f6"; // 蓝色 (当前分支)
+                  } else if (isRemote) {
+                    bgFill = "#5b21b6"; // 紫色 (远程分支)
+                    strokeColor = "#a78bfa"; // 浅紫色边框
+                    strokeWidth = "1.5";
+                    strokeDash = "3 2"; // 虚线边框
+                  }
                 } else {
-                    // Tag 样式
-                    bgFill = "#fbbf24"; // 黄色 (标签)
-                    textColor = "#78350f"; // 深褐色文字
+                  // Tag 样式
+                  bgFill = "#fbbf24"; // 黄色 (标签)
+                  textColor = "#78350f"; // 深褐色文字
                 }
 
                 // 根据名称长度动态计算标签宽度
@@ -243,7 +243,7 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
                     />
                     {/* Tag 小圆点装饰 */}
                     {!isBranch && (
-                       <circle cx={labelX + 8} cy="1" r="2.5" fill="#78350f" />
+                      <circle cx={labelX + 8} cy="1" r="2.5" fill="#78350f" />
                     )}
                     <text
                       x={!isBranch ? 4 : 0}
@@ -258,39 +258,40 @@ const GitGraph: React.FC<GitGraphProps> = ({ state }) => {
                 );
               })}
             </g>
-          )}
+          )
+        }
         )}
 
         {/* HEAD 指示器环 (高亮显示 HEAD 位置) */}
         {headPos && (
           <g transform={`translate(${headPos.x}, ${headPos.y})`} className="transition-all duration-500 ease-in-out">
-             <circle r={NODE_RADIUS + 6} fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" className="animate-spin-slow" />
+            <circle r={NODE_RADIUS + 6} fill="none" stroke="#8b5cf6" strokeWidth="2" strokeDasharray="4 2" className="animate-spin-slow" />
           </g>
         )}
       </svg>
-      
+
       {/* 悬浮图例 */}
       <div className="absolute bottom-4 left-4 bg-slate-800/90 p-3 rounded border border-slate-700 backdrop-blur-sm shadow-lg">
-         <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3 h-3 rounded bg-[#3b82f6]"></span>
-            <span className="text-xs text-gray-300">Active Branch (HEAD)</span>
-         </div>
-         <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3 h-3 rounded bg-[#0f766e]"></span>
-            <span className="text-xs text-gray-300">Local Branch</span>
-         </div>
-         <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3 h-3 rounded bg-[#5b21b6] border border-dashed border-[#a78bfa]"></span>
-            <span className="text-xs text-gray-300">Remote Branch</span>
-         </div>
-         <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3 h-3 rounded bg-[#fbbf24]"></span>
-            <span className="text-xs text-gray-300">Tag</span>
-         </div>
-         <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-700">
-            <span className="w-3 h-3 rounded-full bg-slate-900 border-2 border-emerald-500"></span>
-            <span className="text-xs text-gray-300">Commit Node</span>
-         </div>
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="w-3 h-3 rounded bg-[#3b82f6]"></span>
+          <span className="text-xs text-gray-300">Active Branch (HEAD)</span>
+        </div>
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="w-3 h-3 rounded bg-[#0f766e]"></span>
+          <span className="text-xs text-gray-300">Local Branch</span>
+        </div>
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="w-3 h-3 rounded bg-[#5b21b6] border border-dashed border-[#a78bfa]"></span>
+          <span className="text-xs text-gray-300">Remote Branch</span>
+        </div>
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="w-3 h-3 rounded bg-[#fbbf24]"></span>
+          <span className="text-xs text-gray-300">Tag</span>
+        </div>
+        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-700">
+          <span className="w-3 h-3 rounded-full bg-slate-900 border-2 border-emerald-500"></span>
+          <span className="text-xs text-gray-300">Commit Node</span>
+        </div>
       </div>
     </div>
   );

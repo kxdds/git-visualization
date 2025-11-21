@@ -26,18 +26,18 @@ interface SelectorState {
  * Console 组件
  * 负责右侧的交互逻辑，包括命令输入、日志显示、快捷命令按钮以及动态目标选择。
  */
-const Console: React.FC<ConsoleProps> = ({ 
-  language, 
-  logs, 
+const Console: React.FC<ConsoleProps> = ({
+  language,
+  logs,
   gitState,
-  onCommand, 
-  isLoading, 
-  currentInput, 
+  onCommand,
+  isLoading,
+  currentInput,
   onInputChange,
   setLanguage
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  
+
   // 目标选择器模态框状态
   const [selector, setSelector] = useState<SelectorState>({
     isOpen: false,
@@ -53,7 +53,7 @@ const Console: React.FC<ConsoleProps> = ({
     commit: 1,
     tag: 1
   });
-  
+
   // 自动滚动到日志底部
   useEffect(() => {
     if (scrollRef.current) {
@@ -129,32 +129,32 @@ const Console: React.FC<ConsoleProps> = ({
     if (cmdTemplate.includes('git add .')) {
       const files = gitState.workingDirectory;
       if (files.length > 0) {
-         setSelector({
-           isOpen: true,
-           commandPrefix: 'git add',
-           title: language === Language.EN ? 'Select File to Stage' : '选择要暂存的文件',
-           options: [
-             { label: language === Language.EN ? 'All Files (.)' : '所有文件 (.)', value: '.', sub: 'Recommended' },
-             ...files.map(f => ({ label: f, value: f }))
-           ]
-         });
-         return;
-      }
-    }
-    
-    // 5. 拦截 RESET (Hard): 提供重置目标选项
-    if (cmdTemplate.includes('git reset --hard')) {
         setSelector({
-            isOpen: true,
-            commandPrefix: 'git reset --hard',
-            title: language === Language.EN ? 'Reset to...' : '重置到...',
-            options: [
-                { label: 'HEAD~1 (Previous)', value: 'HEAD~1' },
-                { label: 'HEAD~2', value: 'HEAD~2' },
-                { label: 'Origin Main', value: 'origin/main' }
-            ]
+          isOpen: true,
+          commandPrefix: 'git add',
+          title: language === Language.EN ? 'Select File to Stage' : '选择要暂存的文件',
+          options: [
+            { label: language === Language.EN ? 'All Files (.)' : '所有文件 (.)', value: '.', sub: 'Recommended' },
+            ...files.map(f => ({ label: f, value: f }))
+          ]
         });
         return;
+      }
+    }
+
+    // 5. 拦截 RESET (Hard): 提供重置目标选项
+    if (cmdTemplate.includes('git reset --hard')) {
+      setSelector({
+        isOpen: true,
+        commandPrefix: 'git reset --hard',
+        title: language === Language.EN ? 'Reset to...' : '重置到...',
+        options: [
+          { label: 'HEAD~1 (Previous)', value: 'HEAD~1' },
+          { label: 'HEAD~2', value: 'HEAD~2' },
+          { label: 'Origin Main', value: 'origin/main' }
+        ]
+      });
+      return;
     }
 
     // 6. 回退: 使用动态生成逻辑 (如 touch file_1, branch feature-2)
@@ -173,13 +173,13 @@ const Console: React.FC<ConsoleProps> = ({
     }
     // 动态提交信息
     else if (cmdTemplate.includes('git commit')) {
-       finalCmd = `git commit -m "Update ${newCounters.commit}"`;
-       newCounters.commit += 1;
+      finalCmd = `git commit -m "Update ${newCounters.commit}"`;
+      newCounters.commit += 1;
     }
     // 动态创建标签
     else if (cmdTemplate.includes('git tag')) {
-       finalCmd = `git tag v1.${newCounters.tag}`;
-       newCounters.tag += 1;
+      finalCmd = `git tag v1.${newCounters.tag}`;
+      newCounters.tag += 1;
     }
 
     setCounters(newCounters);
@@ -204,7 +204,7 @@ const Console: React.FC<ConsoleProps> = ({
 
   return (
     <div className="flex flex-col h-full bg-slate-900 border-l border-slate-800 shadow-xl relative">
-      
+
       {/* 目标选择器遮罩层 */}
       {selector.isOpen && (
         <div className="absolute inset-0 z-20 bg-slate-950/90 backdrop-blur-sm flex flex-col p-4 animate-fade-in">
@@ -213,15 +213,15 @@ const Console: React.FC<ConsoleProps> = ({
               <Terminal size={16} />
               {selector.title}
             </h3>
-            <button onClick={() => setSelector({...selector, isOpen: false})} className="text-slate-500 hover:text-white">
+            <button onClick={() => setSelector({ ...selector, isOpen: false })} className="text-slate-500 hover:text-white">
               <X size={16} />
             </button>
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
             {selector.options.length === 0 ? (
-               <div className="text-slate-500 text-xs italic text-center mt-4">
-                 {language === Language.EN ? 'No available targets' : '没有可用的目标'}
-               </div>
+              <div className="text-slate-500 text-xs italic text-center mt-4">
+                {language === Language.EN ? 'No available targets' : '没有可用的目标'}
+              </div>
             ) : (
               selector.options.map((opt, idx) => (
                 <button
@@ -250,18 +250,18 @@ const Console: React.FC<ConsoleProps> = ({
           <h2 className="font-bold tracking-wider text-sm uppercase">{UI_TEXT[language].title}</h2>
         </div>
         <div className="flex gap-2">
-             <button 
-                onClick={() => setLanguage(Language.EN)}
-                className={`text-xs px-2 py-1 rounded ${language === Language.EN ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}
-             >
-                EN
-             </button>
-             <button 
-                onClick={() => setLanguage(Language.ZH)}
-                className={`text-xs px-2 py-1 rounded ${language === Language.ZH ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}
-             >
-                中文
-             </button>
+          <button
+            onClick={() => setLanguage(Language.EN)}
+            className={`text-xs px-2 py-1 rounded ${language === Language.EN ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLanguage(Language.ZH)}
+            className={`text-xs px-2 py-1 rounded ${language === Language.ZH ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+          >
+            中文
+          </button>
         </div>
       </div>
 
@@ -272,7 +272,7 @@ const Console: React.FC<ConsoleProps> = ({
             {language === Language.EN ? 'Ready for commands...' : '准备就绪...'}
           </div>
         )}
-        
+
         {logs.map((log) => (
           <div key={log.id} className={`animate-fade-in flex flex-col gap-1`}>
             {/* 用户命令日志 */}
@@ -284,11 +284,10 @@ const Console: React.FC<ConsoleProps> = ({
             )}
             {/* 系统响应日志 (高亮冲突/警告) */}
             {log.type === 'response' && (
-              <div className={`ml-5 pl-2 border-l-2 p-2 rounded text-xs leading-relaxed whitespace-pre-wrap ${
-                log.content.startsWith('CONFLICT') || log.content.startsWith('WARNING')
-                  ? 'border-orange-500/50 text-orange-200 bg-orange-950/10'
-                  : 'border-blue-500/30 text-blue-200 bg-blue-950/10'
-              }`}>
+              <div className={`ml-5 pl-2 border-l-2 p-2 rounded text-xs leading-relaxed whitespace-pre-wrap ${log.content.startsWith('CONFLICT') || log.content.startsWith('WARNING')
+                ? 'border-orange-500/50 text-orange-200 bg-orange-950/10'
+                : 'border-blue-500/30 text-blue-200 bg-blue-950/10'
+                }`}>
                 {log.content}
               </div>
             )}
@@ -300,13 +299,13 @@ const Console: React.FC<ConsoleProps> = ({
             )}
           </div>
         ))}
-        
+
         {/* Loading 指示器 */}
         {isLoading && (
-           <div className="flex items-center gap-2 ml-5 text-blue-400/70 animate-pulse text-xs">
-              <div className="w-2 h-2 rounded-full bg-blue-400"></div>
-              {UI_TEXT[language].loading}
-           </div>
+          <div className="flex items-center gap-2 ml-5 text-blue-400/70 animate-pulse text-xs">
+            <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+            {UI_TEXT[language].loading}
+          </div>
         )}
       </div>
 
@@ -316,19 +315,19 @@ const Console: React.FC<ConsoleProps> = ({
           {language === Language.EN ? 'Quick Commands' : '常用命令'}
         </div>
         <div className="grid grid-cols-2 gap-2 max-h-[240px] overflow-y-auto custom-scrollbar pr-1">
-           {PRESET_COMMANDS.map((cmd, idx) => (
-             <button
-               key={idx}
-               onClick={() => handlePresetClick(cmd.cmd)}
-               disabled={isLoading}
-               className="text-left px-3 py-2 bg-slate-800 hover:bg-slate-700 hover:border-blue-500/50 text-slate-300 text-xs rounded border border-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 group"
-             >
-               <span className="text-slate-500 group-hover:text-blue-400 transition-colors min-w-[14px]">
-                 {getIcon(cmd.cmd)}
-               </span>
-               <span className="truncate">{cmd.label[language]}</span>
-             </button>
-           ))}
+          {PRESET_COMMANDS.map((cmd, idx) => (
+            <button
+              key={idx}
+              onClick={() => handlePresetClick(cmd.cmd)}
+              disabled={isLoading}
+              className="text-left px-3 py-2 bg-slate-800 hover:bg-slate-700 hover:border-blue-500/50 text-slate-300 text-xs rounded border border-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 group"
+            >
+              <span className="text-slate-500 group-hover:text-blue-400 transition-colors min-w-[14px]">
+                {getIcon(cmd.cmd)}
+              </span>
+              <span className="truncate">{cmd.label[language]}</span>
+            </button>
+          ))}
         </div>
       </div>
 

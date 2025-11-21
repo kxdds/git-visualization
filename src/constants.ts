@@ -8,7 +8,7 @@ export const INITIAL_GIT_STATE: GitState = {
   branches: [
     { name: 'main', commitId: 'c1' }
   ],
-  tags: [], 
+  tags: [],
   remotes: [], // 初始化远程仓库为空
   HEAD: {
     type: 'branch',
@@ -24,9 +24,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'basic-diverge',
     difficulty: 'Beginner',
     title: { [Language.EN]: 'Diverged Branches', [Language.ZH]: '分支分叉 (Merge 练习)' },
-    description: { 
-      [Language.EN]: 'Two branches have diverged. Try to merge "feature" into "main".', 
-      [Language.ZH]: '两个分支已经分叉。尝试将 "feature" 分支合并到 "main" 分支。' 
+    description: {
+      [Language.EN]: 'Two branches have diverged. Try to merge "feature" into "main".',
+      [Language.ZH]: '两个分支已经分叉。尝试将 "feature" 分支合并到 "main" 分支。'
     },
     initialState: {
       commits: [
@@ -49,9 +49,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'merge-conflict',
     difficulty: 'Advanced',
     title: { [Language.EN]: 'Merge Conflict', [Language.ZH]: '合并冲突 (Conflict)' },
-    description: { 
-      [Language.EN]: 'Both branches modified "config.json". Try to merge "feature" into "main" to see a conflict.', 
-      [Language.ZH]: '两个分支都修改了 "config.json"。尝试将 "feature" 合并到 "main" 以触发冲突。' 
+    description: {
+      [Language.EN]: 'Both branches modified "config.json". Try to merge "feature" into "main" to see a conflict.',
+      [Language.ZH]: '两个分支都修改了 "config.json"。尝试将 "feature" 合并到 "main" 以触发冲突。'
     },
     initialState: {
       commits: [
@@ -74,9 +74,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'detached-head',
     difficulty: 'Intermediate',
     title: { [Language.EN]: 'Detached HEAD', [Language.ZH]: 'HEAD 分离状态' },
-    description: { 
-      [Language.EN]: 'HEAD is pointing directly to a commit, not a branch. Try to create a branch here or switch back to main.', 
-      [Language.ZH]: 'HEAD 直接指向了一个提交，而不是分支。尝试在这里创建一个新分支，或者切回 main。' 
+    description: {
+      [Language.EN]: 'HEAD is pointing directly to a commit, not a branch. Try to create a branch here or switch back to main.',
+      [Language.ZH]: 'HEAD 直接指向了一个提交，而不是分支。尝试在这里创建一个新分支，或者切回 main。'
     },
     initialState: {
       commits: [
@@ -97,9 +97,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'rebase-interactive',
     difficulty: 'Advanced',
     title: { [Language.EN]: 'Interactive Rebase', [Language.ZH]: '交互式变基 (Rebase -i)' },
-    description: { 
-      [Language.EN]: 'Feature branch has messy commits ("wip", "typo"). Try to rebase them onto main or squash them.', 
-      [Language.ZH]: 'Feature 分支有杂乱的提交 ("wip", "typo")。尝试将它们变基到 main 上，或者压缩它们。' 
+    description: {
+      [Language.EN]: 'Feature branch has messy commits ("wip", "typo"). Try to rebase them onto main or squash them.',
+      [Language.ZH]: 'Feature 分支有杂乱的提交 ("wip", "typo")。尝试将它们变基到 main 上，或者压缩它们。'
     },
     initialState: {
       commits: [
@@ -124,9 +124,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'cherry-pick',
     difficulty: 'Intermediate',
     title: { [Language.EN]: 'Cherry Pick', [Language.ZH]: '拣选提交 (Cherry-Pick)' },
-    description: { 
-      [Language.EN]: 'You need the "Critical fix" from the feature branch applied to main, but NOT the experimental features.', 
-      [Language.ZH]: '你需要将 feature 分支的 "Critical fix" 应用到 main，但不需要那些实验性功能。' 
+    description: {
+      [Language.EN]: 'You need the "Critical fix" from the feature branch applied to main, but NOT the experimental features.',
+      [Language.ZH]: '你需要将 feature 分支的 "Critical fix" 应用到 main，但不需要那些实验性功能。'
     },
     initialState: {
       commits: [
@@ -150,9 +150,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'remote-sync',
     difficulty: 'Intermediate',
     title: { [Language.EN]: 'Remote Out of Sync', [Language.ZH]: '远程同步 (Push/Pull)' },
-    description: { 
-      [Language.EN]: 'Local has new commits, and Origin has different new commits. You need to pull/merge before pushing.', 
-      [Language.ZH]: '本地有新提交，远程仓库也有不同的新提交。你需要先拉取(Pull)合并，然后才能推送(Push)。' 
+    description: {
+      [Language.EN]: 'Local has new commits, and Origin has different new commits. You need to pull/merge before pushing.',
+      [Language.ZH]: '本地有新提交，远程仓库也有不同的新提交。你需要先拉取(Pull)合并，然后才能推送(Push)。'
     },
     initialState: {
       commits: [
@@ -175,9 +175,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'stash-needed',
     difficulty: 'Beginner',
     title: { [Language.EN]: 'Stash Needed', [Language.ZH]: '暂存现场 (Stash)' },
-    description: { 
-      [Language.EN]: 'You have uncommitted changes but need to switch to the "urgent-fix" branch. Try git stash.', 
-      [Language.ZH]: '你有未提交的更改，但需要切换到 "urgent-fix" 分支。尝试使用 git stash。' 
+    description: {
+      [Language.EN]: 'You have uncommitted changes but need to switch to the "urgent-fix" branch. Try git stash.',
+      [Language.ZH]: '你有未提交的更改，但需要切换到 "urgent-fix" 分支。尝试使用 git stash。'
     },
     initialState: {
       commits: [
@@ -199,9 +199,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'amend-commit',
     difficulty: 'Beginner',
     title: { [Language.EN]: 'Amend Commit', [Language.ZH]: '修正提交 (Amend)' },
-    description: { 
-      [Language.EN]: 'You forgot to include "readme.md" in the last commit. Stage it and amend the commit.', 
-      [Language.ZH]: '你忘记在上次提交中包含 "readme.md"。暂存它并修正(amend)上次提交。' 
+    description: {
+      [Language.EN]: 'You forgot to include "readme.md" in the last commit. Stage it and amend the commit.',
+      [Language.ZH]: '你忘记在上次提交中包含 "readme.md"。暂存它并修正(amend)上次提交。'
     },
     initialState: {
       commits: [
@@ -222,9 +222,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'staging-mess',
     difficulty: 'Beginner',
     title: { [Language.EN]: 'Messy Staging Area', [Language.ZH]: '暂存区管理' },
-    description: { 
-      [Language.EN]: 'Files are in working dir and staging. Try to commit staged ones, or reset them.', 
-      [Language.ZH]: '工作区和暂存区都有文件。尝试提交已暂存的文件，或者重置它们。' 
+    description: {
+      [Language.EN]: 'Files are in working dir and staging. Try to commit staged ones, or reset them.',
+      [Language.ZH]: '工作区和暂存区都有文件。尝试提交已暂存的文件，或者重置它们。'
     },
     initialState: {
       commits: [
@@ -254,8 +254,8 @@ export const PRESET_COMMANDS = [
   { cmd: 'git branch feature', label: { [Language.EN]: 'New Branch', [Language.ZH]: '新建分支 (Branch)' } },
   { cmd: 'git checkout feature', label: { [Language.EN]: 'Checkout', [Language.ZH]: '切换分支 (Checkout)' } },
   { cmd: 'git merge feature', label: { [Language.EN]: 'Merge', [Language.ZH]: '合并 (Merge)' } },
-  { cmd: 'git tag v1.0', label: { [Language.EN]: 'Tag', [Language.ZH]: '打标签 (Tag)' } }, 
-  
+  { cmd: 'git tag v1.0', label: { [Language.EN]: 'Tag', [Language.ZH]: '打标签 (Tag)' } },
+
   // 远程操作
   { cmd: 'git fetch origin', label: { [Language.EN]: 'Fetch', [Language.ZH]: '获取 (Fetch)' } },
   { cmd: 'git pull', label: { [Language.EN]: 'Pull', [Language.ZH]: '拉取 (Pull)' } },
