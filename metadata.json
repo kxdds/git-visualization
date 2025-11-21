@@ -1,0 +1,5 @@
+{
+  "name": "GitViz AI - Interactive Git Learning",
+  "description": "An AI-powered interactive Git visualization tool that helps users understand Git concepts through dynamic command simulation and visual feedback.",
+  "requestFramePermissions": []
+}
