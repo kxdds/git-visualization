@@ -4,20 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GitViz AI</title>
-    <!-- 引入 Tailwind CSS 用于快速编写样式 -->
+    <!-- 引入 Tailwind CSS (本地开发为了简便仍可使用 CDN，生产环境建议安装 npm 包) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Google Fonts: JetBrains Mono (用于代码) 和 Inter (用于界面) -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script>
-      // 配置 Tailwind CSS 的主题扩展
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              mono: ['"JetBrains Mono"', 'monospace'], // 代码字体
-              sans: ['Inter', 'sans-serif'], // UI 字体
+              mono: ['"JetBrains Mono"', 'monospace'],
+              sans: ['Inter', 'sans-serif'],
             },
-            // 自定义 Git 相关颜色变量
             colors: {
               git: {
                 main: '#f14e32',
@@ -37,7 +34,6 @@
         background-color: #0f172a;
         color: #e2e8f0;
       }
-      /* 自定义滚动条样式 (Webkit内核浏览器) */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -53,22 +49,23 @@
         background: #64748b; 
       }
     </style>
-  <!-- 导入映射: 定义第三方库的加载路径 -->
   <script type="importmap">
 {
   "imports": {
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "d3": "https://aistudiocdn.com/d3@^7.9.0"
+    "d3": "https://aistudiocdn.com/d3@^7.9.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4"
   }
 }
 </script>
 </head>
   <body>
-    <!-- React 应用挂载点 -->
     <div id="root"></div>
+    <!-- 注意：Vite 要求源码在 src 目录，这里指向 /src/index.tsx -->
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
