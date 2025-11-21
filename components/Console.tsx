@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Send, Terminal, ChevronRight, RotateCcw, GitCommit, GitBranch, GitMerge, ArrowRightCircle, Upload, Download, Cloud, FilePlus, PlusSquare, X } from 'lucide-react';
+import { Send, Terminal, ChevronRight, RotateCcw, GitCommit, GitBranch, GitMerge, ArrowRightCircle, Upload, Download, Cloud, FilePlus, PlusSquare, X, Tag as TagIcon } from 'lucide-react';
 import { LogEntry, Language, GitState } from '../types';
 import { UI_TEXT, PRESET_COMMANDS } from '../constants';
 
@@ -14,14 +14,18 @@ interface ConsoleProps {
   setLanguage: (lang: Language) => void;
 }
 
-// Type for the internal selector state
+// 目标选择器状态接口 (用于 merge, checkout 等命令的目标选择)
 interface SelectorState {
-  isOpen: boolean;
-  commandPrefix: string;
-  options: Array<{ label: string; value: string; sub?: string }>;
-  title: string;
+  isOpen: boolean;     // 选择器是否打开
+  commandPrefix: string; // 命令前缀 (如 "git merge")
+  options: Array<{ label: string; value: string; sub?: string }>; // 可选项列表
+  title: string;       // 选择器标题
 }
 
+/**
+ * Console 组件
+ * 负责右侧的交互逻辑，包括命令输入、日志显示、快捷命令按钮以及动态目标选择。
+ */
 const Console: React.FC<ConsoleProps> = ({ 
   language, 
   logs, 
@@ -34,7 +38,7 @@ const Console: React.FC<ConsoleProps> = ({
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   
-  // State for the target selector modal
+  // 目标选择器模态框状态
   const [selector, setSelector] = useState<SelectorState>({
     isOpen: false,
     commandPrefix: '',
@@ -42,7 +46,7 @@ const Console: React.FC<ConsoleProps> = ({
     title: ''
   });
 
-  // Counters for dynamic command generation
+  // 计数器状态，用于自动生成唯一的文件名、分支名和提交信息
   const [counters, setCounters] = useState({
     file: 1,
     branch: 1,
@@ -50,13 +54,14 @@ const Console: React.FC<ConsoleProps> = ({
     tag: 1
   });
   
-  // Auto-scroll to bottom of logs
+  // 自动滚动到日志底部
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [logs, isLoading]);
 
+  // 处理表单提交 (Enter 键)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (currentInput.trim() && !isLoading) {
@@ -64,15 +69,20 @@ const Console: React.FC<ConsoleProps> = ({
     }
   };
 
+  // 处理选择器中的选项点击
   const handleOptionSelect = (value: string) => {
     onCommand(`${selector.commandPrefix} ${value}`);
     setSelector({ ...selector, isOpen: false });
   };
 
+  /**
+   * 处理快捷命令按钮点击
+   * 包含拦截逻辑，如果命令需要指定目标 (如 merge 哪个分支)，则弹出选择器
+   */
   const handlePresetClick = (cmdTemplate: string) => {
     if (isLoading) return;
 
-    // 1. Intercept MERGE
+    // 1. 拦截 MERGE: 让用户选择要合并的分支
     if (cmdTemplate.includes('git merge')) {
       const branches = gitState.branches.filter(b => b.name !== gitState.HEAD.ref);
       if (branches.length > 0) {
@@ -86,7 +96,7 @@ const Console: React.FC<ConsoleProps> = ({
       }
     }
 
-    // 2. Intercept REBASE
+    // 2. 拦截 REBASE: 让用户选择基底分支
     if (cmdTemplate.includes('git rebase')) {
       const branches = gitState.branches.filter(b => b.name !== gitState.HEAD.ref);
       if (branches.length > 0) {
@@ -100,10 +110,9 @@ const Console: React.FC<ConsoleProps> = ({
       }
     }
 
-    // 3. Intercept CHECKOUT (excluding -b create new)
+    // 3. 拦截 CHECKOUT: 让用户选择要切换的分支 (排除新建分支操作 -b)
     if (cmdTemplate.includes('git checkout') && !cmdTemplate.includes('-b') && !cmdTemplate.includes('main')) {
-      // If it's just generic checkout or feature checkout, let user pick
-      // Excluding 'main' if user specifically clicked 'checkout main', but the preset is 'checkout feature'
+      // 排除 'main' 的情况，如果用户显式点击了 'checkout main' 按钮
       const branches = gitState.branches.filter(b => b.name !== gitState.HEAD.ref);
       if (branches.length > 0) {
         setSelector({
@@ -116,7 +125,7 @@ const Console: React.FC<ConsoleProps> = ({
       }
     }
 
-    // 4. Intercept ADD (if working directory has files)
+    // 4. 拦截 ADD: 如果工作区有文件，让用户选择
     if (cmdTemplate.includes('git add .')) {
       const files = gitState.workingDirectory;
       if (files.length > 0) {
@@ -133,9 +142,8 @@ const Console: React.FC<ConsoleProps> = ({
       }
     }
     
-    // 5. Intercept RESET (Hard)
+    // 5. 拦截 RESET (Hard): 提供重置目标选项
     if (cmdTemplate.includes('git reset --hard')) {
-        // Offer simplified reset targets
         setSelector({
             isOpen: true,
             commandPrefix: 'git reset --hard',
@@ -149,30 +157,36 @@ const Console: React.FC<ConsoleProps> = ({
         return;
     }
 
-    // 6. Fallback: Use Dynamic Logic (Create new, etc.)
+    // 6. 回退: 使用动态生成逻辑 (如 touch file_1, branch feature-2)
     let finalCmd = cmdTemplate;
     const newCounters = { ...counters };
 
-    // Dynamic File Creation
+    // 动态创建文件
     if (cmdTemplate.startsWith('touch')) {
       finalCmd = `touch file_${newCounters.file}.txt`;
       newCounters.file += 1;
     }
-    // Dynamic Branch Creation
+    // 动态创建分支
     else if (cmdTemplate.includes('git branch') && !cmdTemplate.includes('-d')) {
       finalCmd = `git branch feature-${newCounters.branch}`;
       newCounters.branch += 1;
     }
-    // Dynamic Commit
+    // 动态提交信息
     else if (cmdTemplate.includes('git commit')) {
        finalCmd = `git commit -m "Update ${newCounters.commit}"`;
        newCounters.commit += 1;
+    }
+    // 动态创建标签
+    else if (cmdTemplate.includes('git tag')) {
+       finalCmd = `git tag v1.${newCounters.tag}`;
+       newCounters.tag += 1;
     }
 
     setCounters(newCounters);
     onCommand(finalCmd);
   };
 
+  // 根据命令类型获取对应的图标
   const getIcon = (cmd: string) => {
     if (cmd.includes('commit')) return <GitCommit size={14} />;
     if (cmd.includes('branch')) return <GitBranch size={14} />;
@@ -184,13 +198,14 @@ const Console: React.FC<ConsoleProps> = ({
     if (cmd.includes('fetch') || cmd.includes('clone')) return <Cloud size={14} />;
     if (cmd.includes('add')) return <PlusSquare size={14} />;
     if (cmd.includes('touch')) return <FilePlus size={14} />;
+    if (cmd.includes('tag')) return <TagIcon size={14} />;
     return <Terminal size={14} />;
   };
 
   return (
     <div className="flex flex-col h-full bg-slate-900 border-l border-slate-800 shadow-xl relative">
       
-      {/* Overlay Selector */}
+      {/* 目标选择器遮罩层 */}
       {selector.isOpen && (
         <div className="absolute inset-0 z-20 bg-slate-950/90 backdrop-blur-sm flex flex-col p-4 animate-fade-in">
           <div className="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
@@ -228,7 +243,7 @@ const Console: React.FC<ConsoleProps> = ({
         </div>
       )}
 
-      {/* Header */}
+      {/* 头部: 标题与语言切换 */}
       <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
         <div className="flex items-center gap-2 text-blue-400">
           <Terminal size={20} />
@@ -250,7 +265,7 @@ const Console: React.FC<ConsoleProps> = ({
         </div>
       </div>
 
-      {/* Logs Area */}
+      {/* 日志显示区域 */}
       <div className="flex-1 overflow-y-auto p-4 font-mono text-sm space-y-4 custom-scrollbar" ref={scrollRef}>
         {logs.length === 0 && (
           <div className="text-slate-500 text-center mt-10 italic opacity-50">
@@ -260,12 +275,14 @@ const Console: React.FC<ConsoleProps> = ({
         
         {logs.map((log) => (
           <div key={log.id} className={`animate-fade-in flex flex-col gap-1`}>
+            {/* 用户命令日志 */}
             {log.type === 'command' && (
               <div className="flex items-center gap-2 text-slate-400">
                 <ChevronRight size={14} />
                 <span className="font-bold text-slate-200">{log.content}</span>
               </div>
             )}
+            {/* 系统响应日志 (高亮冲突/警告) */}
             {log.type === 'response' && (
               <div className={`ml-5 pl-2 border-l-2 p-2 rounded text-xs leading-relaxed whitespace-pre-wrap ${
                 log.content.startsWith('CONFLICT') || log.content.startsWith('WARNING')
@@ -275,6 +292,7 @@ const Console: React.FC<ConsoleProps> = ({
                 {log.content}
               </div>
             )}
+            {/* 错误日志 */}
             {log.type === 'error' && (
               <div className="ml-5 pl-2 border-l-2 border-red-500/50 text-red-400 bg-red-950/10 p-2 rounded text-xs">
                 {log.content}
@@ -283,6 +301,7 @@ const Console: React.FC<ConsoleProps> = ({
           </div>
         ))}
         
+        {/* Loading 指示器 */}
         {isLoading && (
            <div className="flex items-center gap-2 ml-5 text-blue-400/70 animate-pulse text-xs">
               <div className="w-2 h-2 rounded-full bg-blue-400"></div>
@@ -291,7 +310,7 @@ const Console: React.FC<ConsoleProps> = ({
         )}
       </div>
 
-      {/* Quick Actions */}
+      {/* 快捷命令区域 */}
       <div className="p-3 bg-slate-900 border-t border-slate-800 flex-shrink-0">
         <div className="text-xs text-slate-500 mb-2 font-semibold uppercase tracking-wider px-1">
           {language === Language.EN ? 'Quick Commands' : '常用命令'}
@@ -313,7 +332,7 @@ const Console: React.FC<ConsoleProps> = ({
         </div>
       </div>
 
-      {/* Input Area */}
+      {/* 输入框区域 */}
       <form onSubmit={handleSubmit} className="p-4 bg-slate-950 border-t border-slate-800">
         <div className="relative flex items-center">
           <span className="absolute left-3 text-slate-500 font-mono">$</span>

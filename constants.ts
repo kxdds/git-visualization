@@ -1,5 +1,6 @@
 import { GitState, Language, Scenario } from './types';
 
+// 应用的初始 Git 状态
 export const INITIAL_GIT_STATE: GitState = {
   commits: [
     { id: 'c1', message: 'Initial commit', parentId: null, timestamp: 1, lane: 0 }
@@ -7,6 +8,8 @@ export const INITIAL_GIT_STATE: GitState = {
   branches: [
     { name: 'main', commitId: 'c1' }
   ],
+  tags: [], 
+  remotes: [], // 初始化远程仓库为空
   HEAD: {
     type: 'branch',
     ref: 'main'
@@ -15,6 +18,7 @@ export const INITIAL_GIT_STATE: GitState = {
   workingDirectory: []
 };
 
+// 预设的学习场景列表
 export const SCENARIOS: Scenario[] = [
   {
     id: 'basic-diverge',
@@ -34,6 +38,8 @@ export const SCENARIOS: Scenario[] = [
         { name: 'main', commitId: 'c2' },
         { name: 'feature', commitId: 'c3' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: [] },
       workingDirectory: []
@@ -57,6 +63,8 @@ export const SCENARIOS: Scenario[] = [
         { name: 'main', commitId: 'c2' },
         { name: 'feature', commitId: 'c3' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: [] },
       workingDirectory: []
@@ -78,6 +86,8 @@ export const SCENARIOS: Scenario[] = [
       branches: [
         { name: 'main', commitId: 'c2' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'commit', ref: 'c1' },
       staging: { files: [] },
       workingDirectory: []
@@ -103,6 +113,8 @@ export const SCENARIOS: Scenario[] = [
         { name: 'main', commitId: 'c2' },
         { name: 'feature', commitId: 'c5' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'feature' },
       staging: { files: [] },
       workingDirectory: []
@@ -127,6 +139,8 @@ export const SCENARIOS: Scenario[] = [
         { name: 'main', commitId: 'c1' },
         { name: 'feature', commitId: 'c4' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: [] },
       workingDirectory: []
@@ -150,6 +164,8 @@ export const SCENARIOS: Scenario[] = [
         { name: 'main', commitId: 'c2' },
         { name: 'origin/main', commitId: 'c3', isRemote: true }
       ],
+      tags: [],
+      remotes: [{ name: 'origin', url: 'https://github.com/example/repo.git' }],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: [] },
       workingDirectory: []
@@ -172,6 +188,8 @@ export const SCENARIOS: Scenario[] = [
         { name: 'main', commitId: 'c1' },
         { name: 'urgent-fix', commitId: 'c2' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: [] },
       workingDirectory: ['half-written-code.js']
@@ -193,6 +211,8 @@ export const SCENARIOS: Scenario[] = [
       branches: [
         { name: 'main', commitId: 'c2' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: [] },
       workingDirectory: ['readme.md']
@@ -213,6 +233,8 @@ export const SCENARIOS: Scenario[] = [
       branches: [
         { name: 'main', commitId: 'c1' }
       ],
+      tags: [],
+      remotes: [],
       HEAD: { type: 'branch', ref: 'main' },
       staging: { files: ['style.css', 'index.html'] },
       workingDirectory: ['script.js']
@@ -220,32 +242,34 @@ export const SCENARIOS: Scenario[] = [
   }
 ];
 
+// 右侧控制台的快捷命令按钮列表
 export const PRESET_COMMANDS = [
-  // File Operations
+  // 文件操作
   { cmd: 'touch file.txt', label: { [Language.EN]: 'Create File', [Language.ZH]: '新建文件 (Touch)' } },
   { cmd: 'git add .', label: { [Language.EN]: 'Stage All', [Language.ZH]: '暂存所有 (Add)' } },
   { cmd: 'git commit -m "msg"', label: { [Language.EN]: 'Commit', [Language.ZH]: '提交 (Commit)' } },
   { cmd: 'git status', label: { [Language.EN]: 'Status', [Language.ZH]: '查看状态 (Status)' } },
 
-  // Branching & Flow
+  // 分支与流控制
   { cmd: 'git branch feature', label: { [Language.EN]: 'New Branch', [Language.ZH]: '新建分支 (Branch)' } },
   { cmd: 'git checkout feature', label: { [Language.EN]: 'Checkout', [Language.ZH]: '切换分支 (Checkout)' } },
-  { cmd: 'git checkout main', label: { [Language.EN]: 'Checkout Main', [Language.ZH]: '切回主分支' } },
   { cmd: 'git merge feature', label: { [Language.EN]: 'Merge', [Language.ZH]: '合并 (Merge)' } },
+  { cmd: 'git tag v1.0', label: { [Language.EN]: 'Tag', [Language.ZH]: '打标签 (Tag)' } }, 
   
-  // Remote Operations
+  // 远程操作
   { cmd: 'git fetch origin', label: { [Language.EN]: 'Fetch', [Language.ZH]: '获取 (Fetch)' } },
   { cmd: 'git pull', label: { [Language.EN]: 'Pull', [Language.ZH]: '拉取 (Pull)' } },
   { cmd: 'git push', label: { [Language.EN]: 'Push', [Language.ZH]: '推送 (Push)' } },
   { cmd: 'git clone https://github.com/repo.git', label: { [Language.EN]: 'Clone', [Language.ZH]: '克隆 (Clone)' } },
 
-  // Advanced / Undo
+  // 高级 / 撤销
   { cmd: 'git rebase main', label: { [Language.EN]: 'Rebase', [Language.ZH]: '变基 (Rebase)' } },
   { cmd: 'git reset --hard HEAD~1', label: { [Language.EN]: 'Reset Hard', [Language.ZH]: '硬重置 (Reset Hard)' } },
   { cmd: 'git revert HEAD', label: { [Language.EN]: 'Revert', [Language.ZH]: '撤销 (Revert)' } },
   { cmd: 'git log --oneline --graph', label: { [Language.EN]: 'Log Graph', [Language.ZH]: '日志图 (Log)' } },
 ];
 
+// 用于界面背景的装饰性 Git 命令文本
 export const BACKGROUND_COMMANDS = [
   "git init", "git status", "git add", "git commit",
   "git branch", "git checkout", "git merge", "git pull",
@@ -254,6 +278,7 @@ export const BACKGROUND_COMMANDS = [
   "git remote", "git stash", "git tag", "git config"
 ];
 
+// Git 命令大全的详细数据（用于模态框展示）
 export const GIT_COMMAND_DETAILS = [
   {
     category: { [Language.EN]: "Setup & Config", [Language.ZH]: "初始化与配置" },
@@ -271,7 +296,12 @@ export const GIT_COMMAND_DETAILS = [
       {
         name: "git clone",
         desc: { [Language.EN]: "Clone a repository into a new directory", [Language.ZH]: "将存储库克隆到新目录中" },
-        usage: "git clone <url>\ngit clone <url> <dir>"
+        usage: "git clone <url>\ngit clone <url> <dir>\ngit clone --depth 1 <url>"
+      },
+      {
+        name: "git remote",
+        desc: { [Language.EN]: "Manage set of tracked repositories", [Language.ZH]: "管理跟踪的远程仓库集合" },
+        usage: "git remote -v\ngit remote add origin <url>\ngit remote set-url origin <url>"
       }
     ]
   },
@@ -286,12 +316,12 @@ export const GIT_COMMAND_DETAILS = [
       {
         name: "git add",
         desc: { [Language.EN]: "Add file contents to the index", [Language.ZH]: "将文件内容添加到索引（暂存区）" },
-        usage: "git add .\ngit add <file>\ngit add -p (interactive)"
+        usage: "git add .\ngit add <file>\ngit add -p (interactive)\ngit add -u (update)"
       },
       {
         name: "git commit",
         desc: { [Language.EN]: "Record changes to the repository", [Language.ZH]: "将暂存区的更改记录到仓库中" },
-        usage: "git commit -m 'msg'\ngit commit -am 'msg' (add & commit)"
+        usage: "git commit -m 'msg'\ngit commit -am 'msg' (add & commit)\ngit commit --amend (modify last commit)"
       },
       {
         name: "git restore",
@@ -316,57 +346,32 @@ export const GIT_COMMAND_DETAILS = [
       {
         name: "git branch",
         desc: { [Language.EN]: "List, create, or delete branches", [Language.ZH]: "列出、创建或删除分支" },
-        usage: "git branch (list)\ngit branch <name>\ngit branch -d <name> (delete)"
+        usage: "git branch (list)\ngit branch <name>\ngit branch -d <name> (delete)\ngit branch -m <old> <new> (rename)"
       },
       {
         name: "git checkout",
         desc: { [Language.EN]: "Switch branches or restore working tree files", [Language.ZH]: "切换分支或恢复文件" },
-        usage: "git checkout <branch>\ngit checkout -b <new-branch>"
+        usage: "git checkout <branch>\ngit checkout -b <new-branch>\ngit checkout <commit>"
       },
       {
         name: "git switch",
-        desc: { [Language.EN]: "Switch branches (newer alternative to checkout)", [Language.ZH]: "切换分支（checkout 的替代方案）" },
+        desc: { [Language.EN]: "Switch branches (newer alternative to checkout)", [Language.ZH]: "切换分支 (checkout 的现代替代)" },
         usage: "git switch <branch>\ngit switch -c <new-branch>"
       },
       {
         name: "git merge",
-        desc: { [Language.EN]: "Join two or more development histories together", [Language.ZH]: "将两个或多个开发历史合并在一起" },
+        desc: { [Language.EN]: "Join two or more development histories together", [Language.ZH]: "合并两个或多个开发历史" },
         usage: "git merge <branch>\ngit merge --abort"
       },
       {
-        name: "git stash",
-        desc: { [Language.EN]: "Stash the changes in a dirty working directory away", [Language.ZH]: "将脏工作目录中的更改储藏起来" },
-        usage: "git stash\ngit stash pop\ngit stash list"
-      },
-      {
         name: "git tag",
-        desc: { [Language.EN]: "Create, list, delete or verify a tag object signed with GPG", [Language.ZH]: "创建、列出、删除或验证标签" },
-        usage: "git tag <name>\ngit tag -a <name> -m 'msg'"
-      }
-    ]
-  },
-  {
-    category: { [Language.EN]: "Sharing & Updating", [Language.ZH]: "远程协作" },
-    commands: [
-      {
-        name: "git fetch",
-        desc: { [Language.EN]: "Download objects and refs from another repository", [Language.ZH]: "从另一个存储库下载对象和引用（不合并）" },
-        usage: "git fetch <remote>\ngit fetch --all"
+        desc: { [Language.EN]: "Create, list, delete or verify a tag object signed with GPG", [Language.ZH]: "创建、列出、删除或验证标签对象" },
+        usage: "git tag <tagname>\ngit tag -d <tagname>\ngit tag -a <tag> -m 'msg'"
       },
       {
-        name: "git pull",
-        desc: { [Language.EN]: "Fetch from and integrate with another repository or a local branch", [Language.ZH]: "获取并整合另一个存储库或本地分支（Fetch + Merge）" },
-        usage: "git pull origin <branch>\ngit pull --rebase"
-      },
-      {
-        name: "git push",
-        desc: { [Language.EN]: "Update remote refs along with associated objects", [Language.ZH]: "更新远程引用及相关对象" },
-        usage: "git push origin <branch>\ngit push -u origin <branch>\ngit push --force"
-      },
-      {
-        name: "git remote",
-        desc: { [Language.EN]: "Manage set of tracked repositories", [Language.ZH]: "管理受相关联的远程仓库" },
-        usage: "git remote -v\ngit remote add origin <url>"
+        name: "git stash",
+        desc: { [Language.EN]: "Stash the changes in a dirty working directory away", [Language.ZH]: "将脏工作目录中的更改暂存起来" },
+        usage: "git stash\ngit stash pop\ngit stash list\ngit stash apply"
       }
     ]
   },
@@ -376,52 +381,122 @@ export const GIT_COMMAND_DETAILS = [
       {
         name: "git log",
         desc: { [Language.EN]: "Show commit logs", [Language.ZH]: "显示提交日志" },
-        usage: "git log --oneline --graph --all\ngit log -p (show patch)"
+        usage: "git log\ngit log --oneline --graph --all\ngit log -p (show diffs)"
       },
       {
         name: "git diff",
-        desc: { [Language.EN]: "Show changes between commits, commit and working tree, etc", [Language.ZH]: "显示提交之间、提交和工作树等之间的更改" },
-        usage: "git diff\ngit diff --staged\ngit diff HEAD~1 HEAD"
+        desc: { [Language.EN]: "Show changes between commits, commit and working tree, etc", [Language.ZH]: "显示提交之间、提交和工作树之间的更改" },
+        usage: "git diff\ngit diff --staged\ngit diff <commit1> <commit2>"
       },
       {
         name: "git show",
-        desc: { [Language.EN]: "Show various types of objects", [Language.ZH]: "显示各种类型的对象（提交详情）" },
-        usage: "git show <commit-id>"
+        desc: { [Language.EN]: "Show various types of objects", [Language.ZH]: "显示各种类型的对象（如提交详情）" },
+        usage: "git show <commit-id>\ngit show HEAD"
       },
       {
-        name: "git blame",
-        desc: { [Language.EN]: "Show what revision and author last modified each line of a file", [Language.ZH]: "显示文件的每一行最后由谁在哪个版本修改" },
-        usage: "git blame <file>"
+        name: "git shortlog",
+        desc: { [Language.EN]: "Summarize 'git log' output", [Language.ZH]: "汇总 git log 输出" },
+        usage: "git shortlog -sn"
+      },
+      {
+        name: "git describe",
+        desc: { [Language.EN]: "Give an object a human readable name based on an available anchor", [Language.ZH]: "基于可用的锚点为对象提供可读名称" },
+        usage: "git describe --tags"
       }
     ]
   },
   {
-    category: { [Language.EN]: "Patching & Debugging", [Language.ZH]: "修补与调试 (高级)" },
+    category: { [Language.EN]: "Sharing & Updating", [Language.ZH]: "共享与更新" },
     commands: [
       {
+        name: "git fetch",
+        desc: { [Language.EN]: "Download objects and refs from another repository", [Language.ZH]: "从另一个存储库下载对象和引用" },
+        usage: "git fetch origin\ngit fetch --all"
+      },
+      {
+        name: "git pull",
+        desc: { [Language.EN]: "Fetch from and integrate with another repository or a local branch", [Language.ZH]: "获取并与另一个存储库或本地分支集成" },
+        usage: "git pull origin <branch>\ngit pull --rebase"
+      },
+      {
+        name: "git push",
+        desc: { [Language.EN]: "Update remote refs along with associated objects", [Language.ZH]: "更新远程引用以及相关对象" },
+        usage: "git push origin <branch>\ngit push -u origin <branch>\ngit push --force"
+      },
+      {
+        name: "git submodule",
+        desc: { [Language.EN]: "Initialize, update or inspect submodules", [Language.ZH]: "初始化、更新或检查子模块" },
+        usage: "git submodule add <url>\ngit submodule update --init --recursive"
+      },
+      {
+        name: "git worktree",
+        desc: { [Language.EN]: "Manage multiple working trees", [Language.ZH]: "管理多个工作树" },
+        usage: "git worktree add <path> <branch>\ngit worktree list"
+      }
+    ]
+  },
+  {
+    category: { [Language.EN]: "Patching & Reverting", [Language.ZH]: "补丁与撤销" },
+    commands: [
+      {
+        name: "git cherry-pick",
+        desc: { [Language.EN]: "Apply the changes introduced by some existing commits", [Language.ZH]: "应用一些现有提交引入的更改" },
+        usage: "git cherry-pick <commit-id>"
+      },
+      {
         name: "git rebase",
-        desc: { [Language.EN]: "Reapply commits on top of another base tip", [Language.ZH]: "在另一个基端之上重新应用提交（变基）" },
-        usage: "git rebase <branch>\ngit rebase -i HEAD~3 (interactive)"
+        desc: { [Language.EN]: "Reapply commits on top of another base tip", [Language.ZH]: "在另一个基端之上重新应用提交" },
+        usage: "git rebase <branch>\ngit rebase -i <commit>"
+      },
+      {
+        name: "git revert",
+        desc: { [Language.EN]: "Revert some existing commits", [Language.ZH]: "撤销一些现有的提交（生成新提交）" },
+        usage: "git revert <commit-id>"
       },
       {
         name: "git reset",
         desc: { [Language.EN]: "Reset current HEAD to the specified state", [Language.ZH]: "将当前 HEAD 重置为指定状态" },
-        usage: "git reset --soft HEAD~1\ngit reset --hard <commit>"
-      },
-      {
-        name: "git revert",
-        desc: { [Language.EN]: "Create a new commit that undoes the changes of a previous commit", [Language.ZH]: "创建一个新提交，用于撤销先前提交的更改" },
-        usage: "git revert <commit>"
-      },
-      {
-        name: "git cherry-pick",
-        desc: { [Language.EN]: "Apply the changes introduced by some existing commits", [Language.ZH]: "应用某些现有提交引入的更改" },
-        usage: "git cherry-pick <commit>"
-      },
+        usage: "git reset --soft <commit>\ngit reset --hard <commit>\ngit reset <commit> (mixed)"
+      }
+    ]
+  },
+  {
+    category: { [Language.EN]: "Debugging & Admin", [Language.ZH]: "调试与管理" },
+    commands: [
       {
         name: "git bisect",
-        desc: { [Language.EN]: "Use binary search to find the commit that introduced a bug", [Language.ZH]: "使用二分查找来查找引入错误的提交" },
-        usage: "git bisect start\ngit bisect bad\ngit bisect good"
+        desc: { [Language.EN]: "Use binary search to find the commit that introduced a bug", [Language.ZH]: "使用二分查找来查找引入 bug 的提交" },
+        usage: "git bisect start\ngit bisect bad\ngit bisect good <commit>"
+      },
+      {
+        name: "git blame",
+        desc: { [Language.EN]: "Show what revision and author last modified each line of a file", [Language.ZH]: "显示每行代码的最后修改版本和作者" },
+        usage: "git blame <file>"
+      },
+      {
+        name: "git grep",
+        desc: { [Language.EN]: "Print lines matching a pattern", [Language.ZH]: "打印匹配模式的行" },
+        usage: "git grep 'text'"
+      },
+      {
+        name: "git reflog",
+        desc: { [Language.EN]: "Manage reflog information", [Language.ZH]: "管理引用日志信息（查看所有 HEAD 移动记录）" },
+        usage: "git reflog"
+      },
+      {
+        name: "git gc",
+        desc: { [Language.EN]: "Cleanup unnecessary files and optimize the local repository", [Language.ZH]: "清理不必要的文件并优化本地存储库" },
+        usage: "git gc"
+      },
+      {
+        name: "git clean",
+        desc: { [Language.EN]: "Remove untracked files from the working tree", [Language.ZH]: "从工作树中删除未跟踪的文件" },
+        usage: "git clean -fd\ngit clean -n (dry run)"
+      },
+      {
+        name: "git archive",
+        desc: { [Language.EN]: "Create an archive of files from a named tree", [Language.ZH]: "从命名树创建文件归档" },
+        usage: "git archive --format=zip HEAD > archive.zip"
       }
     ]
   }
@@ -430,44 +505,26 @@ export const GIT_COMMAND_DETAILS = [
 export const UI_TEXT = {
   [Language.EN]: {
     title: 'GitViz AI',
-    subtitle: 'Interactive Git Learning Tool',
-    inputPlaceholder: 'Enter a git command (e.g., git commit -m "update")',
-    execute: 'Execute',
-    history: 'Command History',
-    visualizer: 'Repository Visualizer',
-    loading: 'Simulating...',
-    branches: 'Branches',
-    head: 'HEAD',
+    subtitle: 'Interactive Git Playground',
     commits: 'Commits',
-    cheatSheet: 'Git Encyclopedia',
-    scenarios: 'Practice Scenarios',
+    branches: 'Branches',
+    scenarios: 'Scenarios',
+    cheatSheet: 'Cheat Sheet',
+    loading: 'Processing...',
+    inputPlaceholder: 'Type a git command...',
     close: 'Close',
-    load: 'Load Scenario',
-    legend: {
-      main: 'Main Branch',
-      feature: 'Feature Branch',
-      head: 'Current HEAD'
-    }
+    load: 'Load Scenario'
   },
   [Language.ZH]: {
     title: 'GitViz AI',
-    subtitle: '交互式 Git 学习可视化工具',
-    inputPlaceholder: '输入 git 命令 (例如: git commit -m "更新")',
-    execute: '执行',
-    history: '命令历史',
-    visualizer: '仓库可视化',
-    loading: '模拟中...',
-    branches: '分支列表',
-    head: 'HEAD 指针',
-    commits: '提交记录',
-    cheatSheet: 'Git 命令大全',
+    subtitle: '交互式 Git 演练场',
+    commits: '提交',
+    branches: '分支',
     scenarios: '练习场景',
+    cheatSheet: '命令速查',
+    loading: '执行中...',
+    inputPlaceholder: '输入 git 命令...',
     close: '关闭',
-    load: '加载场景',
-    legend: {
-      main: '主分支',
-      feature: '功能分支',
-      head: '当前 HEAD'
-    }
+    load: '加载场景'
   }
 };

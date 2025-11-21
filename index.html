@@ -4,16 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GitViz AI</title>
+    <!-- 引入 Tailwind CSS 用于快速编写样式 -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts: JetBrains Mono (用于代码) 和 Inter (用于界面) -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <script>
+      // 配置 Tailwind CSS 的主题扩展
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              mono: ['"JetBrains Mono"', 'monospace'],
-              sans: ['Inter', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'], // 代码字体
+              sans: ['Inter', 'sans-serif'], // UI 字体
             },
+            // 自定义 Git 相关颜色变量
             colors: {
               git: {
                 main: '#f14e32',
@@ -33,7 +37,7 @@
         background-color: #0f172a;
         color: #e2e8f0;
       }
-      /* Custom scrollbar */
+      /* 自定义滚动条样式 (Webkit内核浏览器) */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -49,6 +53,7 @@
         background: #64748b; 
       }
     </style>
+  <!-- 导入映射: 定义第三方库的加载路径 -->
   <script type="importmap">
 {
   "imports": {
@@ -63,6 +68,7 @@
 </script>
 </head>
   <body>
+    <!-- React 应用挂载点 -->
     <div id="root"></div>
   </body>
 </html>
